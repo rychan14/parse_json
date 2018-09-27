@@ -33,7 +33,7 @@ fn main() {
                     let line = line.unwrap();
                     let l: Vec<&str> = line.split("=").collect();
                     let key = l[0].to_owned();
-                    let value = l[1].to_owned();
+                    let value = l[1..].join("=");
                     translation_map.insert(key, value);
                 });
 
@@ -45,7 +45,6 @@ fn main() {
                 .replace("./", "");
             let new_path = format!("{}.js", path_locale);
             let output_path_with_locale = format!("{}{}", output_path, new_path);
-            println!("{:?}", output_path_with_locale);
             remove_file(&output_path_with_locale);
 
             // write hashmap to new file
