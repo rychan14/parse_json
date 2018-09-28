@@ -33,24 +33,26 @@ fn main() {
                     let line = line.unwrap();
                     let l: Vec<&str> = line.split("=").collect();
                     let key = l[0].to_owned();
-                    let value = l[1..].join("=");
+                    let value = l[1..]
+                        .join("=")
+                        .replace("{", "${");
                     translation_map.insert(key, value);
                 });
 
             // remove file if it already exists
-            let path_locale = path
+            let locale = path
                 .replace(".properties", "")
                 .replace("common_", "")
                 .replace("common", "en")
                 .replace("./", "");
-            let new_path = format!("{}.js", path_locale);
+            let new_path = format!("{}.js", locale);
             let output_path_with_locale = format!("{}{}", output_path, new_path);
             remove_file(&output_path_with_locale);
 
             // write hashmap to new file
             let new_file = File::create(&output_path_with_locale).unwrap();
             let json = json!(translation_map).to_string();
-            let module = format!("export const {} = {}", path_locale, json);
+            let module = format!("export const {} = {}", locale, json);
             write_file(new_file, &module.as_bytes()).expect("failed to write");
         });
 }
